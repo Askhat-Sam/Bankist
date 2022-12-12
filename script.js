@@ -186,24 +186,13 @@ console.log(totalDepositsUSD);
 Забытое (2004)
 */
 
-// const ages1 = [5, 2, 4, 1, 15, 8, 3];
+const ages1 = [5, 2, 4, 1, 15, 8, 3];
 // const ages2 = [16, 6, 10, 5, 6, 1, 4];
 
-// const calcAverageHumanAge = function (ages) {
-//   const newAges = ages.map(dogAge =>
-//     dogAge <= 2 ? dogAge * 2 : 16 + dogAge * 4
-//   );
-//   console.log(newAges);
+const calcAverageHumanAge = (ages)=> ages.map(dogAge => dogAge <= 2 ? dogAge * 2 : 16 + dogAge * 4)
+.filter(i => i >= 18).reduce((acc, age, i, arr) => acc + age, 0) / arr.lenght;
 
-//   const fileteredArr = newAges.filter(i => i >= 18);
-//   console.log(fileteredArr);
-//   console.log(fileteredArr.length);
 
-//   const averageAge =
-//     fileteredArr.reduce((acc, age) => acc + age, 0) / fileteredArr.length;
 
-//   return averageAge;
-// };
-
-// console.log(calcAverageHumanAge(ages1));
+console.log(calcAverageHumanAge(ages1));
 // console.log(calcAverageHumanAge(ages2));
