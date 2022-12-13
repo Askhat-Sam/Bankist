@@ -181,18 +181,39 @@ console.log(totalDepositsUSD);
 
 // console.log(balance);
 
-/*
-Дело №39 (2009)
-Забытое (2004)
-*/
 
 const ages1 = [5, 2, 4, 1, 15, 8, 3];
 // const ages2 = [16, 6, 10, 5, 6, 1, 4];
 
 const calcAverageHumanAge = (ages)=> ages.map(dogAge => dogAge <= 2 ? dogAge * 2 : 16 + dogAge * 4)
-.filter(i => i >= 18).reduce((acc, age, i, arr) => acc + age, 0) / arr.lenght;
-
-
+.filter(i => i >= 18).reduce((acc, age, i, arr) => acc + age / arr.length, 0);
 
 console.log(calcAverageHumanAge(ages1));
 // console.log(calcAverageHumanAge(ages2));
+
+
+const firstWithdrawal=movements.find(mov=>mov<0);
+console.log(movements);
+console.log(firstWithdrawal);
+
+console.log(accounts);
+
+const account = accounts.find(acc=>acc.owner==="Jessica Davis");
+console.log(account);
+
+//Event handler for log in function
+let currentAccount;
+btnLogin.addEventListener('click', function (e){
+  e.preventDefault()
+  currentAccount=accounts.find(acc=>acc.username===inputLoginUsername.value)
+  console.log(currentAccount)
+  if (currentAccount?.pin===Number(inputLoginPin.value)) {
+    //display UI and welcome message
+    labelWelcome.textContent=`Welcome back ${currentAccount.owner.split(' ')[0]}`;
+    
+    // display movements
+    // display balance
+    // display summary
+  }
+})
+
