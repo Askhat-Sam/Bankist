@@ -78,7 +78,7 @@ const displayMovement = function (movements) {
   });
 };
 
-displayMovement(account1.movements);
+// displayMovement(account1.movements);
 
 const creatrUsernames = function (accs) {
   accs.forEach(function (acc) {
@@ -91,28 +91,39 @@ const creatrUsernames = function (accs) {
 };
 creatrUsernames(accounts);
 
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, i) => acc + i, 0);
-  labelBalance.innerHTML = `${balance} EURO`;
-};
-calcDisplayBalance(account2.movements);
+const updateUI=function(acc){
+  // display movements
+  displayMovement(acc.movements)
+  // display balance
+  calcDisplayBalance(acc)
+  // display summary
+  calcDisplaySummary(acc)
+}
 
-const calcDisplaySummary = function (movements) {
-  const incomes = movements
+
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, i) => acc + i, 0);
+  labelBalance.textContent = `${acc.balance} €`;
+
+};
+// calcDisplayBalance(account2.movements);
+
+const calcDisplaySummary = function (acc) {
+  const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov);
   labelSumIn.textContent = `${incomes} `;
 
-  const out = movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov);
+  const out = acc.movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov);
   labelSumOut.textContent = `${Math.abs(out)} `;
 
-  const interest = movements
+  const interest = acc.movements
     .filter(mov => mov > 0)
-    .map(Deposit => (Deposit * 1.2) / 100)
+    .map(Deposit => (Deposit * acc.interestRate) / 100)
     .reduce((acc, int) => acc + int);
   labelSumInterest.textContent = interest;
 };
-calcDisplaySummary(account1.movements);
+// calcDisplaySummary(account1.movements);
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
 // LECTURES;
@@ -129,58 +140,6 @@ const totalDepositsUSD = movements
   .reduce((acc, mov) => acc + mov, 0);
 
 console.log(totalDepositsUSD);
-
-/////////////////////////////////////////////////
-
-//Coding chanllenge 1
-// const checkDogs = function (dogsJulia, dogsKate) {
-//   const dogsJuliaCorrected = dogsJulia.slice();
-//   dogsJuliaCorrected.splice(0);
-//   dogsJuliaCorrected.splice(-2);
-//   const joinedDogs = dogsJuliaCorrected.concat(dogsKate);
-//   joinedDogs.forEach(function (dog, index) {
-//     if (dog < 3) {
-//       console.log(`Dog number ${index + 1} is still a puppy`);
-//     } else {
-//       console.log(
-//         `Dog number ${index + 1} is an adult, and is ${dog} years old`
-//       );
-//     }
-//   });
-// };
-
-// // checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
-// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
-// const maxValue = movements.reduce((acc, i) => {
-//   return i < acc ? acc : i;
-// });
-
-// console.log(maxValue);
-
-// const euroToUSD = 1.1;
-// const movementsUSD = movements.map(i => i * euroToUSD);
-
-// console.log(movementsUSD);
-
-// const movementsDescription = movements.map(function (i, index, arr) {
-//   if (i > 0) return;
-// });
-
-// const deposits = movements.filter(function (i) {
-//   return i > 0;
-// });
-
-// const withdrawals = movements.filter(i => i < 0);
-
-// console.log(movements);
-// console.log(deposits);
-// console.log(withdrawals);
-// console.log(movements);
-// const balance = movements.reduce((acc, i, index, arr) => acc + i, 0);
-
-// console.log(balance);
-
 
 const ages1 = [5, 2, 4, 1, 15, 8, 3];
 // const ages2 = [16, 6, 10, 5, 6, 1, 4];
@@ -210,10 +169,51 @@ btnLogin.addEventListener('click', function (e){
   if (currentAccount?.pin===Number(inputLoginPin.value)) {
     //display UI and welcome message
     labelWelcome.textContent=`Welcome back ${currentAccount.owner.split(' ')[0]}`;
+    containerApp.style.opacity=100;
+    //clear input fields
+    inputLoginUsername.value=inputLoginPin.value='';
+    inputLoginPin.blur()
+    //Update UI
+    updateUI(currentAccount)
     
-    // display movements
-    // display balance
-    // display summary
   }
 })
+
+btnTransfer.addEventListener('click', function(e){
+  e.preventDefault()
+  const amount=Number(inputTransferAmount.value);
+  const receiverAcc= accounts.find(acc=>acc.username===inputTransferTo.value);
+  inputTransferAmount.value=inputTransferTo.value='';
+
+  if(amount>0 && currentAccount.balance>=amount&&receiverAcc&& 
+    receiverAcc?.username!==currentAccount.username)
+    {
+    //Doing the transfer
+    currentAccount.movements.push(-amount);
+    console.log(currentAccount)
+    receiverAcc.movements.push(amount)
+    //Update UI
+    updateUI(currentAccount)
+    
+    
+  }
+})
+//Close account
+btnClose.addEventListener('click', function(e){
+  e.preventDefault()
+  
+  if (currentAccount.username===inputCloseUsername.value && 
+    currentAccount.pin===Number(inputClosePin.value))
+    {
+      const index = accounts.findIndex(acc=>acc.username===currentAccount.username)
+      
+      accounts.splice(index,1)
+      containerApp.style.opacity=0;
+
+  }
+  inputCloseUsername.value=inputClosePin.value='';
+})
+
+
+
 
